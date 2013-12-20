@@ -1,7 +1,6 @@
-# Laravel 4 w/ Vagrant
+# Laravel 4 w/ Vagrant - Global Box
 
 A basic Ubuntu 12.04 Vagrant setup with [Laravel4](http://laravel.com/docs) and PHP 5.5.
-PHP 5.4 w/ Apache 2.2 is available on the php54 branch.
 
 ## Requirements
 
@@ -11,12 +10,9 @@ PHP 5.4 w/ Apache 2.2 is available on the php54 branch.
 
 ## Setup
 
-
 * Clone this repository `git clone http://github.com/bryannielsen/Laravel4-Vagrant.git`
-* run `vagrant up` inside the newly created directory
 * (the first time you run vagrant it will need to fetch the virtual box image which is ~300mb so depending on your download speed this could take some time)
-* Vagrant will then use puppet to provision the base virtual box with our LAMP stack (this could take a few minutes) also note that composer will need to fetch all of the packages defined in the app's composer.json which will add some more time to the first provisioning run
-* You can verify that everything was successful by opening http://localhost:8888 in a browser
+* Vagrant will then use puppet to provision the base virtual box with our LAMP stack (this could take a few minutes) 
 
 *Note: You may have to change permissions on the www/app/storage folder to 777 under the host OS* 
 
@@ -25,6 +21,16 @@ For example: `chmod -R 777 www/app/storage/`
 ## Usage
 
 Some basic information on interacting with the vagrant box
+
+### Fabric Commands
+
+All the fabric commands need to be prefixed with `fab vagrant`, for example `fab vagrant composer` will run a composer update.
+
+* `composer:'comand string'` - This will run the composer command that you request. Ex: `fab vagrant composer:'install'`
+* `artisan:'command string'` - Similar to above but for artisan commands. Ex: `fab vagrant artisan:'migate'`
+* `setProject:projectname` - Set the project folder to be the specified name in the parent folder.
+* `restoreDb` - restore the current projects last database dump
+* `backupDb` - Backup the current project's database
 
 ### Port Forwards
 
@@ -61,16 +67,6 @@ To enable XDebug:
 
 
 _Note: All XDebug settings can be configured in the php.ini template at `puppet/modules/php/templates/php.ini.erb`_
-
-
-### Vagrant
-
-Vagrant is [very well documented](http://vagrantup.com/v1/docs/index.html) but here are a few common commands:
-
-* `vagrant up` starts the virtual machine and provisions it
-* `vagrant suspend` will essentially put the machine to 'sleep' with `vagrant resume` waking it back up
-* `vagrant halt` attempts a graceful shutdown of the machine and will need to be brought back with `vagrant up`
-* `vagrant ssh` gives you shell access to the virtual machine
 
 ----
 ##### Virtual Machine Specifications #####

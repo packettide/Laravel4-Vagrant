@@ -9,9 +9,9 @@ Exec
 
 exec 
 { 
-    'apt-get update':
-        command => '/usr/bin/apt-get update',
-        require => Exec['add php55 apt-repo']
+  'apt-get update':
+    command => '/usr/bin/apt-get update',
+            require => Exec['add php55 apt-repo']
 }
 
 include bootstrap
@@ -25,20 +25,33 @@ include beanstalkd
 include redis
 include memcached
 
-include laravel_app
+#include laravel_app
+
+exec { 'install composer':
+  command => 'curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin',
+          require => Package['php5-cli'],
+          unless => "[ -f /usr/local/bin/composer ]"
+}
+
+exec { 'global composer':
+  command => "sudo mv /usr/local/bin/composer.phar /usr/local/bin/composer",
+          require => Exec['install composer'],
+          unless => "[ -f /usr/local/bin/composer ]"
+}
+
 
 class { 'postgresql::server':
   config_hash => {
     'ip_mask_deny_postgres_user' => '0.0.0.0/32',
-    'ip_mask_allow_all_users'    => '0.0.0.0/0',
-    'listen_addresses'           => '*',
-    'manage_redhat_firewall'     => true,
-    'postgres_password'          => 'vagrant',
+      'ip_mask_allow_all_users'    => '0.0.0.0/0',
+      'listen_addresses'           => '*',
+      'manage_redhat_firewall'     => true,
+      'postgres_password'          => 'vagrant',
   },
-  require => [Exec['apt-get update'], Package['python-software-properties']]
+              require => [Exec['apt-get update'], Package['python-software-properties']]
 }
 
 postgresql::db { 'database':
   user     => 'root',
-  password => 'root'
+           password => 'root'
 }
